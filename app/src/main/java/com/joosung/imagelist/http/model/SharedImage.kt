@@ -35,12 +35,23 @@ class Urls {
 }
 
 class AppSharedImage(si: SharedImage, override val appShared: AppShared) : AppObject<SharedImage>, BaseObservable() {
-    override val id: String = si.id!!
-    val url = ObservableField(si.url!!)
-    override val isPlaceHolder = ObservableField(false)
+    override val id: String
+    val url = ObservableField<String>()
+    override val isPlaceHolder = ObservableField<Boolean>()
 
-    val width = ObservableField(si.width!!)
-    val height = ObservableField(si.height!!)
+    val width = ObservableField<Int>()
+    val height = ObservableField<Int>()
+
+    init {
+        id = si.id ?: ""
+        if (si.id == null) {
+            isPlaceHolder.set(true)
+        }
+
+        si.url?.apply { url.set(this) }
+        si.width?.apply { width.set(this) }
+        si.height?.apply { height.set(this) }
+    }
 
     override fun update(data: SharedImage) {
         isPlaceHolder.set(false)
