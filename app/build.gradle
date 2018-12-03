@@ -59,12 +59,23 @@ android {
         splits.density.enable = false
         aaptOptions.cruncherEnabled = false
     }
+
+    flavorDimensions "default"
+    productFlavors {
+        toy {
+            dimension "default"
+            buildConfigField "String", "Setting", "\"Toy\""
+            buildConfigField "String", "API_URL", "\"https://api.unsplash.com/\""
+            buildConfigField "String", "Authorization", "\"Client-ID 8f4d9d58f02f7affb61adc61dacc19707001bde8c653c288969f7fd011cf05b1\""
+        }
+    }
 }
 
 dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
     implementation"org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
     implementation "com.android.support:appcompat-v7:$android_support_version"
+    implementation "com.android.support:support-v4:$android_support_version"
     implementation "com.android.support.constraint:constraint-layout:$constraint_layout_version"
     testImplementation 'junit:junit:4.12'
     androidTestImplementation 'com.android.support.test:runner:1.0.2'
