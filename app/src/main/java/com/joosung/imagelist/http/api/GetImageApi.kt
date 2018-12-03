@@ -9,6 +9,8 @@ import com.joosung.imagelist.http.ImageCommonRequest
 import com.joosung.imagelist.http.model.SharedImage
 import java.lang.reflect.Type
 
+typealias ImageId = String
+
 class GetImageRequest(count: Int = 20) : ImageCommonRequest<GetImageResponse>() {
     override val responseType: Type get() = object : TypeToken<GetImageResponse>() {}.type
     override val method: HTTPMethod get() = HTTPMethod.get
