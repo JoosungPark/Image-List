@@ -9,7 +9,7 @@ import com.joosung.imagelist.ui.home.HomeFragment
 
 sealed class FragmentBundle {
     object Home : FragmentBundle()
-    data class ImagePager(val index: Int) : FragmentBundle()
+//    data class ImagePager(val index: Int) : FragmentBundle()
 //    data class Image(val image: ImageModel) : FragmentBundle()
 }
 
