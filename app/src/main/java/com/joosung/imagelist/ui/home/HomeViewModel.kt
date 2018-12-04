@@ -7,6 +7,7 @@ import com.joosung.imagelist.common.CompositeDisposablePresentable
 import com.joosung.imagelist.common.ImageRepository
 import com.joosung.imagelist.http.api.GetImageRequest
 import com.joosung.imagelist.http.api.ImageId
+import com.joosung.imagelist.util.LogUtil
 import com.joosung.library.vm.SingleLiveEvent
 import com.joosung.rxrecycleradapter.RxRecyclerAdapterChangeEvent
 import io.reactivex.Single
@@ -75,18 +76,12 @@ class HomeViewModel(
                     if (imageIdList.isNotEmpty()) {
                         cells.addAll(imageIdList.map { HomeCellType.Image(it, repo) })
                         cells.add(HomeCellType.LoadNext)
-                        latestItemCount = cells.size
                         dataSourceSubject.takeIf { !it.hasComplete() }?.onNext(RxRecyclerAdapterChangeEvent.InsertedRange(latestItemCount - 1, cells))
                         latestItemCount = latestItemCount - 1 + cells.size
-
                     }
-
-                    isLoading.set(false)
                 },
                 onError = { error ->
                     apiErrorEvent.value = error.message
-                    isLoading.set(false)
-
                 }
             )
             .addTo(disposables)
@@ -110,7 +105,7 @@ class HomeImageServer(private val server: AppServerInterface, val disposables: C
                         if (!emitter.isDisposed) {
                             it.response.get()?.images?.apply {
                                 val list = arrayListOf<ImageId>()
-                                forEach { it.id?.apply { list.add(this) } }
+                                forEach { image -> image.id?.apply { list.add(this) } }
                                 emitter.onSuccess(list)
                             }
                         }

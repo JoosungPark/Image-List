@@ -1,9 +1,5 @@
 package com.joosung.imagelist.http
 
-/**
- *
- * Created by jei.park on 2017. 12. 21..
- */
 open class ImageThrowable(override val message: String? = "", override val cause: Throwable? = null) : Throwable(message, cause)
 
 class ImageJavaError(private val error: Throwable) : ImageThrowable(error.localizedMessage, error)

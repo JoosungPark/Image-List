@@ -6,6 +6,8 @@ import com.joosung.imagelist.R
 import com.joosung.imagelist.common.App
 import com.joosung.imagelist.model.Persist
 import com.joosung.imagelist.preference.ImagePreferences
+import com.joosung.imagelist.util.LogUtil
+import com.joosung.library.rx.delay
 import com.squareup.picasso.Picasso
 
 private val imagePlaceHolder = R.color.basic_divider
@@ -13,11 +15,11 @@ private val imageBaseColor = android.R.color.black
 
 @BindingAdapter("imageUrl", "imageWidth", "imageHeight")
 fun loadImage(view: ImageView, url: String?, width: Int?, height: Int?) {
-    if (width == null || height == null) throw IllegalArgumentException("width or height contain null value. width : $width height : $height")
+    if (width == null || height == null) { return }
     val threshold = App.get().persist.read<Int>(Persist.Key.ImageThreshold) ?: ImagePreferences.imageThresholdDefault
     val scaledSize = recommendSize(width, height, threshold, ImagePreferences.imageMinimumHeight)
 
-    view.layoutParams.height = scaledSize.second
+    delay { view.layoutParams.height = scaledSize.second }
 
     url?.let {
         Picasso.with(view.context)
@@ -48,8 +50,8 @@ private fun recommendSize(originWidth: Int, originHeight: Int, threshold: Int, m
     return if (originWidth < threshold && originHeight < threshold) Pair(originWidth, originHeight)
     else {
         var scaledSize = Pair(originWidth, originHeight)
-        val delta = 0.1
-        var index = 9
+        val delta = 0.01
+        var index = 99
 
         while (scaledSize.second > minHeight && scaledSize.first > threshold || scaledSize.second > threshold) {
             val scaledWidth = (originWidth * index * delta).toInt()

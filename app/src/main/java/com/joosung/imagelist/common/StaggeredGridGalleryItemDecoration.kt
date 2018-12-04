@@ -7,10 +7,6 @@ import android.support.v7.widget.StaggeredGridLayoutManager
 import android.view.View
 import com.joosung.imagelist.R
 
-/**
- *
- * Created by jei.park on 2017. 12. 26..
- */
 class StaggeredGridGalleryItemDecoration constructor(context: Context) : RecyclerView.ItemDecoration() {
 
     val pxLeftPadding: Int = context.resources.getDimensionPixelSize(R.dimen.Gallery_Left_Padding)
