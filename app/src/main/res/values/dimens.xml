@@ -4,4 +4,6 @@
     <dimen name="Gallery_Right_Padding">15dp</dimen>
     <dimen name="Gallery_Column_Spacing_Half">4dp</dimen>
     <dimen name="Gallery_Row_Spacing">8dp</dimen>
+
+    <dimen name="Toast_Bottom_Margin">50dp</dimen>
 </resources>

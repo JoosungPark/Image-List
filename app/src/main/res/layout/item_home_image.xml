@@ -6,6 +6,10 @@
         <variable
                 name="image"
                 type="com.joosung.imagelist.http.model.AppSharedImage" />
+
+        <variable
+                name="viewModel"
+                type="com.joosung.imagelist.ui.home.HomeViewModel" />
     </data>
 
     <android.support.v7.widget.AppCompatImageView
@@ -14,7 +18,8 @@
             android:scaleType="centerCrop"
             app:imageWidth="@{image.width}"
             app:imageHeight="@{image.height}"
-            app:imageUrl="@{image.url}">
+            app:imageUrl="@{image.url}"
+            android:onClick="@{() -> viewModel.tapImage(image.id)}">
 
     </android.support.v7.widget.AppCompatImageView>
 </layout>
