@@ -8,6 +8,7 @@ import com.joosung.imagelist.common.ImageRepository
 import com.joosung.imagelist.http.api.GetImageRequest
 import com.joosung.imagelist.http.api.ImageId
 import com.joosung.imagelist.util.LogUtil
+import com.joosung.library.rx.RxViewModel
 import com.joosung.library.vm.SingleLiveEvent
 import com.joosung.rxrecycleradapter.RxRecyclerAdapterChangeEvent
 import io.reactivex.Single
@@ -21,7 +22,7 @@ class HomeViewModel(
     private val repo: ImageRepository,
     private val service: HomeImageServerInterface,
     override val disposables: CompositeDisposable
-) : ViewModel(), CompositeDisposablePresentable {
+) : RxViewModel(), CompositeDisposablePresentable {
 
     private val imageIdList = arrayListOf<String>()
     val dataSourceSubject = PublishSubject.create<RxRecyclerAdapterChangeEvent<HomeCellType>>()
@@ -112,7 +113,7 @@ class HomeImageServer(private val server: AppServerInterface, val disposables: C
                     },
                     onError = {
                         emitter.onError(it)
-                    }).addTo(disposables)
+                    })
         }
     }
 }
