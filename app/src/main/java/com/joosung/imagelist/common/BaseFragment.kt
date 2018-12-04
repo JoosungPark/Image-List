@@ -9,19 +9,11 @@ import com.joosung.imagelist.util.KeyboardUtils
 import io.reactivex.disposables.CompositeDisposable
 
 open class BaseFragment : Fragment(), CompositeDisposablePresentable {
-    protected val DEBUG_TAG = BaseFragment::class.java.simpleName
-    protected val server = App.get().server
-    protected val shared = App.get().shared!!
+    protected val DEBUG_TAG = this::class.java.simpleName
     override val disposables = CompositeDisposable()
     private var baseActivityContext: BaseActivity? = null
 
-
-
-    val baseActivity: BaseActivity
-        get() {
-        return (activity as? BaseActivity)?.let { it }
-        ?: baseActivityContext ?: activity as BaseActivity
-    }
+    fun baseActivity(): BaseActivity? = (activity as? BaseActivity)
 
     val baseFragment: BaseFragment get() = this
 

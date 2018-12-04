@@ -1,8 +1,8 @@
 package com.joosung.imagelist.preference
 
-import com.joosung.imagelist.preference.BasePreferences
+import android.content.Context
 
-class ImagePreferences(val name: String) : BasePreferences(name) {
+class ImagePreferences(private val context: Context, val name: String) : BasePreferences(context, name) {
     companion object {
         val kImageThreshold = "kImageThreshold"
         val imageThresholdDelta = 50

@@ -16,7 +16,7 @@ private val imageBaseColor = android.R.color.black
 @BindingAdapter("imageUrl", "imageWidth", "imageHeight")
 fun loadImage(view: ImageView, url: String?, width: Int?, height: Int?) {
     if (width == null || height == null) { return }
-    val threshold = App.get().persist.read<Int>(Persist.Key.ImageThreshold) ?: ImagePreferences.imageThresholdDefault
+    val threshold = App.getPersist(view.context).read<Int>(Persist.Key.ImageThreshold) ?: ImagePreferences.imageThresholdDefault
     val scaledSize = recommendSize(width, height, threshold, ImagePreferences.imageMinimumHeight)
 
     delay { view.layoutParams.height = scaledSize.second }

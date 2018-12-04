@@ -21,11 +21,13 @@ import com.joosung.rxrecycleradapter.RxRecyclerAdapterViewHolder
 import io.reactivex.Observable
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.rxkotlin.addTo
+import org.koin.android.viewmodel.ext.android.sharedViewModel
 
 class HomeFragment : BaseFragment(), ErrorCatchable {
 
     private var binding: FragmentHomeBinding? = null
-    private var viewModel: HomeViewModel? = null
+    private val viewModel: HomeViewModel by sharedViewModel()
+
     private lateinit var adapter: RxRecyclerAdapter<HomeCellType>
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
@@ -36,11 +38,8 @@ class HomeFragment : BaseFragment(), ErrorCatchable {
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
 
-        val shared = App.get().shared!!
-        val server = HomeImageServer(shared)
-
-        viewModel = withViewModel({ HomeViewModel(shared, server) }) {
-            observe(getApiErrorEvent()) { error -> error?.apply { handleError(shared, this) } }
+        withViewModel({ viewModel }) {
+            observe(getApiErrorEvent()) { error -> error?.also { handleError(activity, it) } }
             init()
         }
         bindList()
@@ -48,7 +47,7 @@ class HomeFragment : BaseFragment(), ErrorCatchable {
 
     private fun bindList() {
         binding?.also { binding ->
-            binding.recycler.layoutManager = LinearLayoutManager(baseActivity)
+            activity?.also { binding.recycler.layoutManager = LinearLayoutManager(it) }
 
             adapter = RxRecyclerAdapter(object : RxRecyclerAdapter.Delegate<HomeCellType> {
                 override fun getItemViewType(position: Int, item: HomeCellType): Int = when (item) {
@@ -58,7 +57,7 @@ class HomeFragment : BaseFragment(), ErrorCatchable {
 
                 override fun viewHolderForViewType(parent: ViewGroup, viewType: Int): RxRecyclerAdapterViewHolder<HomeCellType> {
                     val viewHolder = when (viewType) {
-                        R.layout.item_home_image -> HomeImageCell(inflate(parent, viewType), viewModel!!, disposables)
+                        R.layout.item_home_image -> HomeImageCell(inflate(parent, viewType), viewModel, disposables)
                         R.layout.item_home_loading -> HomeLoadingCell(inflate(parent, viewType), loadNextDelegate, disposables)
                         else -> throw RuntimeException("Fatal Error")
                     }
@@ -69,13 +68,13 @@ class HomeFragment : BaseFragment(), ErrorCatchable {
             })
 
             binding.recycler.adapter = adapter
-            viewModel?.dataSourceSubject
-                ?.startWith(Observable.empty())
-                ?.observeOn(AndroidSchedulers.mainThread())
-                ?.subscribe(adapter)
-                ?.addTo(disposables)
+            viewModel.dataSourceSubject
+                .startWith(Observable.empty())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(adapter)
+                .addTo(disposables)
 
-            viewModel?.load()
+            viewModel.load()
         }
     }
 
@@ -86,7 +85,7 @@ class HomeFragment : BaseFragment(), ErrorCatchable {
 
     private val loadNextDelegate = object : HomeLoadingCellDelegate {
         override fun loadNext() {
-            viewModel?.loadNext()
+            viewModel.loadNext()
         }
     }
 
