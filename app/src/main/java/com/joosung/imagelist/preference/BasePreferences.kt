@@ -3,14 +3,13 @@ package com.joosung.imagelist.preference
 import android.content.Context
 import android.content.SharedPreferences
 import android.preference.PreferenceManager
-import com.joosung.imagelist.common.App
 
-abstract class BasePreferences(private val name: String) {
+abstract class BasePreferences(private val context: Context, private val name: String) {
     lateinit var preferences: SharedPreferences
     
     private fun initialize() {
-        preferences = if (name.isEmpty()) PreferenceManager.getDefaultSharedPreferences(App.get())
-        else App.get().getSharedPreferences(name, Context.MODE_PRIVATE)
+        preferences = if (name.isEmpty()) PreferenceManager.getDefaultSharedPreferences(context)
+        else context.getSharedPreferences(name, Context.MODE_PRIVATE)
     }
     
     inline fun <reified T> updateValue(key: String, value: T?) {

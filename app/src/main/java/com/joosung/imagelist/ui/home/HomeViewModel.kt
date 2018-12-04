@@ -35,7 +35,6 @@ class HomeViewModel(
     }
 
     fun load() {
-
         launch {
             imageIdList.clear()
             isLoading.set(true)

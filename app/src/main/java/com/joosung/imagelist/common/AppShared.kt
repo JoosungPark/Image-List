@@ -23,8 +23,9 @@ interface ImageRepository {
     fun getImage(id: String): AppSharedImage?
 }
 
-class AppShared(config: AppConfig) : CompositeDisposablePresentable, AppServerInterface, ImageRepository {
-    override val disposables = CompositeDisposable()
+interface AppSharedInterface: AppServerInterface, ImageRepository
+
+class AppShared(config: AppConfig) : AppSharedInterface {
     val gson = GsonBuilder().registerTypeAdapterFactory(OptionalTypeAdapter.FACTORY).create()!!
     val images = VarDict { AppSharedImage.createPlaceholder(it, this) }
     val server = AppServer(this, config)
