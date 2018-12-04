@@ -11,8 +11,11 @@ import io.reactivex.disposables.CompositeDisposable
 open class BaseFragment : Fragment(), CompositeDisposablePresentable {
     protected val DEBUG_TAG = BaseFragment::class.java.simpleName
     protected val server = App.get().server
+    protected val shared = App.get().shared!!
     override val disposables = CompositeDisposable()
     private var baseActivityContext: BaseActivity? = null
+
+
 
     val baseActivity: BaseActivity
         get() {
