@@ -1,9 +1,8 @@
 package com.joosung.imagelist.common
 
-import android.content.Context
 import com.joosung.imagelist.BuildConfig
 
-class AppConfig(context: Context, private val setting: Setting) {
+class AppConfig(private val setting: Setting) {
     enum class Setting {
         Toy
         ;
