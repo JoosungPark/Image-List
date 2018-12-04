@@ -37,9 +37,9 @@ class HomeFragment : BaseFragment(), ErrorCatchable {
         super.onActivityCreated(savedInstanceState)
 
         val shared = App.get().shared!!
-        val server = HomeImageServer(shared, disposables)
+        val server = HomeImageServer(shared)
 
-        viewModel = withViewModel({ HomeViewModel(shared, server, disposables) }) {
+        viewModel = withViewModel({ HomeViewModel(shared, server) }) {
             observe(getApiErrorEvent()) { error -> error?.apply { handleError(shared, this) } }
             init()
         }
