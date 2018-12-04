@@ -6,10 +6,6 @@ import android.support.v4.app.FragmentStatePagerAdapter
 import android.view.ViewGroup
 import com.joosung.imagelist.util.LogUtil
 
-/**
- *
- * Created by jei.park on 2018. 1. 5..
- */
 open class BaseFragmentStatePagerAdapter(fm: FragmentManager) : FragmentStatePagerAdapter(fm) {
     protected val DEBUG_TAG = this.javaClass.simpleName
 
@@ -31,7 +27,6 @@ open class BaseFragmentStatePagerAdapter(fm: FragmentManager) : FragmentStatePag
 
     open fun rx(): (List<FragmentBundle>) -> Unit {
         return fun(list: List<FragmentBundle>) {
-            LogUtil.d("jei... rx count ${list.size}")
             items.clear()
             items.addAll(list)
             notifyDataSetChanged()

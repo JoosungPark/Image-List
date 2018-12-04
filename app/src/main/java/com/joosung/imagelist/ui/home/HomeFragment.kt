@@ -42,8 +42,8 @@ class HomeFragment : BaseFragment(), ErrorCatchable {
         viewModel = withViewModel({ HomeViewModel(shared, server, disposables) }) {
             observe(getApiErrorEvent()) { error -> error?.apply { handleError(shared, this) } }
             init()
-            bindList()
         }
+        bindList()
     }
 
     private fun bindList() {

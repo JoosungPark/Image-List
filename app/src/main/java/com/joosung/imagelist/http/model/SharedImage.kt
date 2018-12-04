@@ -7,6 +7,7 @@ import com.joosung.imagelist.common.AppShared
 import com.joosung.imagelist.http.api.ImageId
 import com.joosung.imagelist.model.AppJsonObject
 import com.joosung.imagelist.model.AppObject
+import com.joosung.imagelist.util.LogUtil
 
 class SharedImage(appShared: AppShared, createPlaceHolder: Boolean, placeHolderId: String) : AppJsonObject {
     @SerializedName("id")
@@ -15,7 +16,9 @@ class SharedImage(appShared: AppShared, createPlaceHolder: Boolean, placeHolderI
     @SerializedName("urls")
     var urls: Urls? = null
 
-    var url = urls?.full
+    fun url(): String? {
+        return urls?.full
+    }
 
     @SerializedName("width")
     var width: Int? = null
@@ -30,8 +33,9 @@ class SharedImage(appShared: AppShared, createPlaceHolder: Boolean, placeHolderI
 }
 
 class Urls {
-    @SerializedName("full")
+    @SerializedName("regular")
     val full: String? = null
+
 }
 
 class AppSharedImage(si: SharedImage, override val appShared: AppShared) : AppObject<SharedImage>, BaseObservable() {
@@ -48,14 +52,16 @@ class AppSharedImage(si: SharedImage, override val appShared: AppShared) : AppOb
             isPlaceHolder.set(true)
         }
 
-        si.url?.apply { url.set(this) }
+        si.url()?.apply { url.set(this) }
         si.width?.apply { width.set(this) }
         si.height?.apply { height.set(this) }
     }
 
     override fun update(data: SharedImage) {
         isPlaceHolder.set(false)
-        data.url?.apply { url.set(this) }
+        data.url()?.apply { url.set(this) }
+        data.width?.also { width.set(it) }
+        data.height?.also { height.set(it) }
     }
 
     companion object {
