@@ -51,7 +51,6 @@ class HomeViewModel(
                             dataSourceSubject.takeIf { !it.hasComplete() }?.onNext(RxRecyclerAdapterChangeEvent.Reloaded(cells))
                         }
 
-
                         isLoading.set(false)
                     },
                     onError = { error ->
