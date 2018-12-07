@@ -7,7 +7,7 @@ import com.joosung.imagelist.ui.image.item.ImageFragment
 
 sealed class FragmentBundle {
     object Home : FragmentBundle()
-    data class ImagePager(val list: ArrayList<ImageId>) : FragmentBundle()
+    data class ImagePager(val index: Int) : FragmentBundle()
     data class Image(val id: ImageId) : FragmentBundle()
 }
 
@@ -16,7 +16,7 @@ class FragmentFactory {
     companion object {
         fun createFragment(bundle: FragmentBundle): BaseFragment = when (bundle) {
                 is FragmentBundle.Home -> HomeFragment.newInstance()
-                is FragmentBundle.ImagePager -> ImagePagerFragment.newInstance(bundle.list)
+                is FragmentBundle.ImagePager -> ImagePagerFragment.newInstance(bundle.index)
                 is FragmentBundle.Image -> ImageFragment.newInstance(bundle.id)
         }
     }
