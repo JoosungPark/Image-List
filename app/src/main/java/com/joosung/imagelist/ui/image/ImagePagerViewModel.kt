@@ -14,5 +14,6 @@ class ImagePagerViewModel(
 ) : RxViewModel() {
 
     val dataSource = imageSource.asObservable().map { list ->  list.map { FragmentBundle.Image(it) } }
-
+    val isDragging = Variable(false)
+    val isLoading = Variable(false)
 }

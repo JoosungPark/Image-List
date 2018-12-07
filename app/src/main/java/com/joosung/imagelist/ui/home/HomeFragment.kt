@@ -7,7 +7,6 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import com.joosung.imagelist.R
-import com.joosung.imagelist.common.App
 import com.joosung.imagelist.common.BaseFragment
 import com.joosung.imagelist.common.ErrorCatchable
 import com.joosung.imagelist.databinding.FragmentHomeBinding
@@ -40,13 +39,14 @@ class HomeFragment : BaseFragment(), ErrorCatchable {
 
         withViewModel({ viewModel }) {
             observe(getApiErrorEvent()) { error -> error?.also { handleError(activity, it) } }
-            init()
+            observe(getIsRefreshingEvent()) { value -> value?.also { binding?.refresh?.isRefreshing = it }}
         }
         bindList()
     }
 
     private fun bindList() {
         binding?.also { binding ->
+            binding.refresh.setOnRefreshListener { viewModel.load() }
             activity?.also { binding.recycler.layoutManager = LinearLayoutManager(it) }
 
             adapter = RxRecyclerAdapter(object : RxRecyclerAdapter.Delegate<HomeCellType> {
