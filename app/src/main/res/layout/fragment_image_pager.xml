@@ -12,7 +12,7 @@
 
     <android.support.constraint.ConstraintLayout
             android:layout_width="match_parent"
-            android:layout_height="match_parent">
+            android:layout_height="match_parent" >
 
         <android.support.v7.widget.AppCompatButton
                 android:id="@+id/close"
@@ -24,7 +24,6 @@
                 app:layout_constraintRight_toRightOf="parent"
                 android:visibility='@{safeUnbox(viewModel.isDragging) ? View.GONE : View.VISIBLE , default="visible"}'
                 tools:visibility="visible"/>
-
 
         <com.joosung.imagelist.common.view.HackyViewPager
                 android:id="@+id/view_pager"

@@ -22,8 +22,8 @@ class HomeViewModel(
     private val service: HomeImageServerInterface
 ) : RxViewModel() {
 
-    private val imageIdList = Variable(arrayListOf<ImageId>())
-    fun getImageSource() = imageIdList
+    private val imageSource = Variable(arrayListOf<ImageId>())
+    fun getImageSource() = imageSource
 
     val dataSourceSubject = PublishSubject.create<RxRecyclerAdapterChangeEvent<HomeCellType>>()
     private val apiErrorEvent = SingleLiveEvent<String>()
@@ -32,7 +32,7 @@ class HomeViewModel(
     val isLoading = ObservableField<Boolean>(true)
     private var latestItemCount = 0
 
-    private val tapImageEvent = SingleLiveEvent<ImageId>()
+    private val tapImageEvent = SingleLiveEvent<Int>()
     fun getTapImageEvent() = tapImageEvent
 
     private val isRefreshingEvent = SingleLiveEvent<Boolean>()
@@ -44,7 +44,7 @@ class HomeViewModel(
 
     fun monitor() {
         launch {
-            imageIdList
+            imageSource
                 .asObservable()
                 .distinctUntilChanged()
                 .subscribe {
@@ -62,7 +62,7 @@ class HomeViewModel(
     fun load() {
         launch {
             latestItemCount = 0
-            imageIdList.value.clear()
+            imageSource.value.clear()
             isLoading.set(true)
             service.loadImage()
                 .observeOn(AndroidSchedulers.mainThread())
@@ -75,6 +75,8 @@ class HomeViewModel(
                             cells.add(HomeCellType.LoadNext)
                             latestItemCount = cells.size
                             dataSourceSubject.takeIf { !it.hasComplete() }?.onNext(RxRecyclerAdapterChangeEvent.Reloaded(cells))
+
+                            imageSource.value = imageIdList
                         }
 
                         isRefreshingEvent.value = false
@@ -103,6 +105,11 @@ class HomeViewModel(
                             cells.add(HomeCellType.LoadNext)
                             dataSourceSubject.takeIf { !it.hasComplete() }?.onNext(RxRecyclerAdapterChangeEvent.InsertedRange(latestItemCount - 1, cells))
                             latestItemCount = latestItemCount - 1 + cells.size
+
+                            val list = arrayListOf<ImageId>()
+                            list.addAll(imageSource.value)
+                            list.addAll(imageIdList)
+                            imageSource.value = list
                         }
                     },
                     onError = { error ->
@@ -113,7 +120,7 @@ class HomeViewModel(
     }
 
     fun tapImage(id: ImageId) {
-        tapImageEvent.value = id
+        tapImageEvent.value = imageSource.value.indexOf(id)
     }
 }
 
