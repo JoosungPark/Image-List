@@ -6,6 +6,7 @@ import com.joosung.imagelist.common.ImageRepository
 import com.joosung.imagelist.http.api.GetImageRequest
 import com.joosung.imagelist.http.api.ImageId
 import com.joosung.library.rx.RxViewModel
+import com.joosung.library.rx.Variable
 import com.joosung.library.vm.SingleLiveEvent
 import com.joosung.rxrecycleradapter.RxRecyclerAdapterChangeEvent
 import io.reactivex.Single
@@ -19,24 +20,40 @@ class HomeViewModel(
     private val service: HomeImageServerInterface
 ) : RxViewModel() {
 
-    private val imageIdList = arrayListOf<String>()
+    private val imageIdList = Variable(arrayListOf<ImageId>())
+    fun getImageSource() = imageIdList
+
     val dataSourceSubject = PublishSubject.create<RxRecyclerAdapterChangeEvent<HomeCellType>>()
     private val apiErrorEvent = SingleLiveEvent<String>()
     fun getApiErrorEvent() = apiErrorEvent
 
-    val isLoading = ObservableField<Boolean>()
+    val isLoading = ObservableField<Boolean>(true)
     private var latestItemCount = 0
 
     private val tapImageEvent = SingleLiveEvent<ImageId>()
     fun getTapImageEvent() = tapImageEvent
 
-    fun init() {
-        isLoading.set(true)
+    fun monitor() {
+        launch {
+            imageIdList
+                .asObservable()
+                .distinctUntilChanged()
+                .subscribe {
+                    val previous = latestItemCount - 1
+                    dataSourceSubject.takeIf { !it.hasComplete() }?.onNext(RxRecyclerAdapterChangeEvent.Removed(previous))
+                    val cells = arrayListOf<HomeCellType>()
+                    cells.addAll(it.filterIndexed { index, _ -> index >= previous }.map { HomeCellType.Image(it, repo) })
+                    cells.add(HomeCellType.LoadNext)
+                    dataSourceSubject.takeIf { !it.hasComplete() }?.onNext(RxRecyclerAdapterChangeEvent.InsertedRange(previous, cells))
+                    latestItemCount = previous + cells.size
+                }
+        }
     }
 
     fun load() {
         launch {
-            imageIdList.clear()
+            latestItemCount = 0
+            imageIdList.value.clear()
             isLoading.set(true)
             service.loadImage()
                 .observeOn(AndroidSchedulers.mainThread())
