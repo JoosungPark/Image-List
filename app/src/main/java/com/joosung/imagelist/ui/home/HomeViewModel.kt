@@ -1,6 +1,8 @@
 package com.joosung.imagelist.ui.home
 
+import android.databinding.BaseObservable
 import android.databinding.ObservableField
+import android.support.v4.widget.SwipeRefreshLayout
 import com.joosung.imagelist.common.AppServerInterface
 import com.joosung.imagelist.common.ImageRepository
 import com.joosung.imagelist.http.api.GetImageRequest
@@ -32,6 +34,13 @@ class HomeViewModel(
 
     private val tapImageEvent = SingleLiveEvent<ImageId>()
     fun getTapImageEvent() = tapImageEvent
+
+    private val isRefreshingEvent = SingleLiveEvent<Boolean>()
+    fun getIsRefreshingEvent() = isRefreshingEvent
+
+    init {
+        load()
+    }
 
     fun monitor() {
         launch {
@@ -68,10 +77,12 @@ class HomeViewModel(
                             dataSourceSubject.takeIf { !it.hasComplete() }?.onNext(RxRecyclerAdapterChangeEvent.Reloaded(cells))
                         }
 
+                        isRefreshingEvent.value = false
                         isLoading.set(false)
                     },
                     onError = { error ->
                         apiErrorEvent.value = error.message
+                        isRefreshingEvent.value = false
                         isLoading.set(false)
                     }
                 )
